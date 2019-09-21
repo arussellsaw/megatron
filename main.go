@@ -14,7 +14,8 @@ import (
 )
 
 var (
-	mediaPath = "/home/share/tv/Peep Show/"
+	//	mediaPath = "/home/share/tv/Peep Show/"
+	mediaPath = "/home/share/tv/Peep Show/Season 5"
 )
 
 func main() {
@@ -28,7 +29,7 @@ func main() {
 	}
 	handler.DefaultIndex = index
 
-	r := handler.Router()
+	r := handler.Router().Filter(typhon.ErrorFilter)
 
 	s, err := typhon.Listen(r, ":8000")
 	if err != nil {

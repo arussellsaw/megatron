@@ -13,7 +13,8 @@ var DefaultIndex *library.Index
 func Router() typhon.Service {
 	r := typhon.Router{}
 
-	r.Register("/api/search", "GET", HandleQuoteSearch)
+	r.Register("GET", "/api/search", handleQuoteSearch)
+	r.Register("GET", "/api/render", handleRenderGIF)
 
 	return r.Serve()
 }

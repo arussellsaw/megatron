@@ -26,7 +26,7 @@ type Index struct {
 }
 
 type SearchResult struct {
-	Episode    domain.Episode `json:"episode"`
+	EpisodeID  string         `json:"episode_id"`
 	Caption    domain.Caption `json:"caption"`
 	Confidence float64        `json:"confidence"`
 }
@@ -98,7 +98,7 @@ func (i *Index) Search(text string) ([]SearchResult, error) {
 		return nil, err
 	}
 
-	sr := make([]SearchResult, 0, len(res.Hits))
+	sm := make(map[string]SearchResult)
 	for _, hit := range res.Hits {
 		parts := strings.SplitN(hit.ID, ":", 2)
 		eID, ok := i.episodesByCaptionID[parts[0]]
@@ -109,15 +109,18 @@ func (i *Index) Search(text string) ([]SearchResult, error) {
 		e := i.episodesByID[eID]
 		for _, c := range e.Subtitles {
 			if c.ID == parts[0] {
-				sr = append(sr, SearchResult{
-					Episode:    e,
+				sm[c.ID] = SearchResult{
+					EpisodeID:  eID,
 					Caption:    c,
 					Confidence: hit.Score,
-				})
+				}
 			}
 		}
 	}
-
+	sr := make([]SearchResult, 0, len(sm))
+	for _, s := range sm {
+		sr = append(sr, s)
+	}
 	return sr, nil
 }
 
